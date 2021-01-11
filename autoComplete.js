@@ -21,10 +21,7 @@ const createAutoComplete = ({
   const resultsWrapper = autocomplete.querySelector(".results");
 
   const onInput = async (e) => {
-    console.log(e);
     const movies = await fetchData(e.target.value.trim());
-    console.log(movies);
-
     if (movies.length > 0) {
       resultsWrapper.innerHTML = "";
       dropdown.classList.add("is-active");
@@ -32,7 +29,7 @@ const createAutoComplete = ({
         const option = document.createElement("a");
         option.classList.add("dropdown-item");
         option.innerHTML = renderOption(movie); // renderOption(movie)
-        option.addEventListener("click", (e) => {
+        option.addEventListener("click", () => {
           input.value = inputValue(movie);
           flag = 1;
           let singleData = onOptionSelect(movie);

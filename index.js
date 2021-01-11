@@ -2,6 +2,9 @@ const APIkey = "http://www.omdbapi.com/?i=tt3896198&apikey=bb6a13de";
 
 let flag = 0;
 let response;
+let leftMovie;
+let rightMovie;
+
 const fetchData = async (title) => {
   if (!flag) {
     // for many movies
@@ -14,7 +17,6 @@ const fetchData = async (title) => {
   } else {
     // for single movie details
     flag = 0;
-    console.log(title);
     response = await axios.get("https://www.omdbapi.com/", {
       params: {
         apikey: "bb6a13de",
@@ -50,7 +52,10 @@ createAutoComplete({
   ...autoCompleteConfig,
   autocomplete: document.querySelector("#left-autocomplete"),
   displayResult(movie) {
+    let objLen = Object.keys(movie);
     document.querySelector("#left-summary").innerHTML = movieTemplate(movie);
+    if (objLen.length > 0) runComparision(movie, "left");
+    else runComparision(undefined, "left");
     document.querySelector(".tutorial").classList.add("is-hidden");
   },
 });
@@ -59,7 +64,10 @@ createAutoComplete({
   ...autoCompleteConfig,
   autocomplete: document.querySelector("#right-autocomplete"),
   displayResult(movie) {
+    let objLen = Object.keys(movie);
     document.querySelector("#right-summary").innerHTML = movieTemplate(movie);
+    if (objLen.length > 0) runComparision(movie, "right");
+    else runComparision(undefined, "right");
     document.querySelector(".tutorial").classList.add("is-hidden");
   },
 });
@@ -87,7 +95,7 @@ const movieTemplate = (movieDetail) => {
       <p class='subtitle'>Awards</p>
       <p class='title'>${movieDetail.Awards}</p>
     </article>
-    <article class='notification is-primary'>
+    <article class='notification is-primary boxoffice'>
       <p class='subtitle'>Box Office</p>
       <p class='title'>${movieDetail.BoxOffice}</p>     
     </article>
@@ -106,5 +114,49 @@ const movieTemplate = (movieDetail) => {
   `;
   } else {
     return ``;
+  }
+};
+
+const runComparision = (movie, choose) => {
+  let rightSelected = document.querySelector("#right-summary");
+  let leftSelected = document.querySelector("#left-summary");
+
+  if (choose === "left") {
+    leftMovie = movie;
+  } else {
+    rightMovie = movie;
+  }
+
+  if (leftMovie && rightMovie) {
+    let leftAmt = parseInt(leftMovie.BoxOffice.slice(1).replace(/,/g, ""));
+    let rightAmt = parseInt(rightMovie.BoxOffice.slice(1).replace(/,/g, ""));
+
+    if (!isNaN(leftAmt) && !isNaN(rightAmt)) {
+      if (leftAmt > rightAmt) {
+        leftSelected.querySelector(".boxoffice").style.backgroundColor =
+          "lightgreen";
+        rightSelected.querySelector(".boxoffice").style.backgroundColor =
+          "#FFFF33";
+      } else if (rightAmt > leftAmt) {
+        leftSelected.querySelector(".boxoffice").style.backgroundColor =
+          "#FFFF33";
+        rightSelected.querySelector(".boxoffice").style.backgroundColor =
+          "lightgreen";
+      } else {
+        rightSelected.querySelector(".boxoffice").style.backgroundColor =
+          "#00d1b2";
+        leftSelected.querySelector(".boxoffice").style.backgroundColor =
+          "#00d1b2";
+      }
+    } else {
+      rightSelected.querySelector(".boxoffice").style.backgroundColor =
+        "#00d1b2";
+      leftSelected.querySelector(".boxoffice").style.backgroundColor =
+        "#00d1b2";
+    }
+  } else if (leftMovie) {
+    leftSelected.querySelector(".boxoffice").style.backgroundColor = "#00d1b2";
+  } else if (rightMovie) {
+    rightSelected.querySelector(".boxoffice").style.backgroundColor = "#00d1b2";
   }
 };
