@@ -42,6 +42,7 @@ const createAutoComplete = ({
         resultsWrapper.appendChild(option);
       }
     } else {
+      displayResult({});
       dropdown.classList.remove("is-active");
     }
   };

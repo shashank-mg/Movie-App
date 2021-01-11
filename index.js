@@ -51,6 +51,7 @@ createAutoComplete({
   autocomplete: document.querySelector("#left-autocomplete"),
   displayResult(movie) {
     document.querySelector("#left-summary").innerHTML = movieTemplate(movie);
+    document.querySelector(".tutorial").classList.add("is-hidden");
   },
 });
 
@@ -59,12 +60,15 @@ createAutoComplete({
   autocomplete: document.querySelector("#right-autocomplete"),
   displayResult(movie) {
     document.querySelector("#right-summary").innerHTML = movieTemplate(movie);
+    document.querySelector(".tutorial").classList.add("is-hidden");
   },
 });
 
 const movieTemplate = (movieDetail) => {
   // Bulma CSS
-  return `
+  let objLen = Object.keys(movieDetail);
+  if (objLen.length > 0) {
+    return `
     <article class='media'>
       <figure class='media-left'>
         <p class='image'>
@@ -100,4 +104,7 @@ const movieTemplate = (movieDetail) => {
       <p class='title'>${movieDetail.imdbVotes}</p>
     </article>
   `;
+  } else {
+    return ``;
+  }
 };
